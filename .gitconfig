@@ -1,0 +1,7 @@
+[core]
+	autocrlf = input
+	safecrlf = warn
+	eol = lf
+	filemode = false
+[push]
+	default = current
