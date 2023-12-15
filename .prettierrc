@@ -7,8 +7,6 @@
     "printWidth": 120,
     "quoteProps": "as-needed",
     "semi": true,
-    "singleQuote": true,
-    "jsxSingleQuote": true,
     "tabWidth": 4,
     "trailingComma": "none"
 }

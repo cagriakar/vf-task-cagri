@@ -16,16 +16,6 @@ function LoadingContent() {
     );
 }
 
-// const Loadable = (Component: React.Element) =>
-//     // eslint-disable-next-line func-names
-//     function (props: any) {
-//         return (
-//             <Suspense fallback={<LoadingScreen />}>
-//                 <Component {...props} />
-//             </Suspense>
-//         );
-//     };
-
 export default function App() {
     return (
         <Routes>

@@ -1,6 +1,7 @@
 import { Avatar, Box, Skeleton, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ApiError from "../components/ApiError";
 import SelectableButton from "../components/SelectableButton";
 import useResourceById, { type DetailedResource } from "../hooks/useResourceById";
 import useSkillsResourceById from "../hooks/useSkillsResourceById";
@@ -105,9 +106,10 @@ function ResourceOverview({
 
 function ResourceSkills({ isVisible }: { isVisible: boolean }) {
     const { resourceId } = useParams();
-    const { data, isLoading } = useSkillsResourceById(isVisible ? resourceId : undefined);
+    const { data, isLoading, error, mutate } = useSkillsResourceById(isVisible ? resourceId : undefined);
 
     if (!isVisible) return null;
+    if (error) return <ApiError onRetry={mutate} />;
     if (isLoading)
         return (
             <Stack sx={{ ml: 7 }} gap={1.5}>
@@ -133,7 +135,7 @@ function ResourceSkills({ isVisible }: { isVisible: boolean }) {
 }
 export default function ResourceDetail() {
     const { resourceId } = useParams();
-    const { data, isLoading } = useResourceById(resourceId);
+    const { data, isLoading, error, mutate } = useResourceById(resourceId);
     const [viewType, setViewType] = useState<Viewtype>(Viewtype.overview);
 
     useEffect(() => {
@@ -144,7 +146,7 @@ export default function ResourceDetail() {
         <Box sx={{ display: "flex", p: 2.5 }}>
             <Stack gap={2.7}>
                 <Stack direction="row" alignItems="center" sx={{ mb: 2 }}>
-                    <ResourceHeader data={data!} isLoading={isLoading} />
+                    {error ? <ApiError onRetry={mutate} /> : <ResourceHeader data={data!} isLoading={isLoading} />}
                 </Stack>
                 <Stack gap={2.7}>
                     <Stack direction="row" spacing={1} sx={{ ml: 7 }}>
@@ -167,7 +169,15 @@ export default function ResourceDetail() {
                             {Viewtype.skills}
                         </SelectableButton>
                     </Stack>
-                    <ResourceOverview data={data!} isLoading={isLoading} isVisible={viewType === Viewtype.overview} />
+                    {error ? (
+                        <ApiError onRetry={mutate} />
+                    ) : (
+                        <ResourceOverview
+                            data={data!}
+                            isLoading={isLoading}
+                            isVisible={viewType === Viewtype.overview}
+                        />
+                    )}
                 </Stack>
                 <ResourceSkills isVisible={viewType === Viewtype.skills} />
             </Stack>

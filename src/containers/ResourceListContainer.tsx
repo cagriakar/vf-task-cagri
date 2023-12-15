@@ -8,12 +8,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import ApiError from "../components/ApiError";
 import SelectableButton from "../components/SelectableButton";
 import useResourceList from "../hooks/useResourceList";
 
 export default function ResourceList({ componentloading = true }: { componentloading?: boolean }) {
     const { resourceId } = useParams();
-    const { data, isLoading } = useResourceList();
+    const { data, isLoading, error, mutate } = useResourceList();
     const [isAscending, setIsAscending] = useState(true);
     const sortedData = useMemo(
         () => data?.sort((a, b) => (isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name))),
@@ -36,6 +37,7 @@ export default function ResourceList({ componentloading = true }: { componentloa
                 </Typography>
                 <Stack direction="row" spacing={1}>
                     <SelectableButton
+                        disabled={!!error}
                         isSelected={isAscending}
                         onClick={() => {
                             setIsAscending(true);
@@ -44,6 +46,7 @@ export default function ResourceList({ componentloading = true }: { componentloa
                         A-Z
                     </SelectableButton>
                     <SelectableButton
+                        disabled={!!error}
                         isSelected={!isAscending}
                         onClick={() => {
                             setIsAscending(false);
@@ -56,6 +59,7 @@ export default function ResourceList({ componentloading = true }: { componentloa
             <Divider sx={{ my: 0.75 }} />
 
             <List sx={{ height: "100%", overflowY: "scroll" }}>
+                {error && <ApiError onRetry={mutate} />}
                 {componentloading || isLoading ? (
                     <>
                         <ListItem disablePadding>

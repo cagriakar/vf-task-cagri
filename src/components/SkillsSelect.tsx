@@ -2,6 +2,7 @@ import { Checkbox, FormControlLabel, FormGroup, FormHelperText, InputLabel, Skel
 import { Stack } from "@mui/system";
 import useSkills from "../hooks/useSkills";
 import { type CreateResourceFrom } from "../pages/ResourceCreate";
+import ApiError from "./ApiError";
 
 export default function SkillsSelect({
     errorText,
@@ -12,7 +13,9 @@ export default function SkillsSelect({
     value: CreateResourceFrom["skills"];
     onChange: (...event: any[]) => void;
 }) {
-    const { data, isLoading } = useSkills();
+    const { data, isLoading, error, mutate } = useSkills();
+
+    if (error) return <ApiError onRetry={mutate} />;
 
     if (isLoading)
         return (
